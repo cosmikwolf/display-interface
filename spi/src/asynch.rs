@@ -2,7 +2,7 @@
 
 use byte_slice_cast::*;
 use embedded_hal::digital::OutputPin;
-use embedded_hal_async::spi::SpiDeviceWrite;
+use embedded_hal_async::spi::SpiDevice;
 
 use display_interface::{AsyncWriteOnlyDataCommand, DataFormat, DisplayError};
 
@@ -12,7 +12,7 @@ type Result = core::result::Result<(), DisplayError>;
 
 async fn send_u8<SPI>(spi: &mut SPI, words: DataFormat<'_>) -> Result
 where
-    SPI: SpiDeviceWrite,
+    SPI: SpiDevice,
 {
     match words {
         DataFormat::U8(slice) => spi
@@ -122,7 +122,7 @@ use alloc::boxed::Box;
 #[cfg_attr(not(feature = "nightly"), async_trait::async_trait(?Send))]
 impl<SPI, DC> AsyncWriteOnlyDataCommand for SPIInterface<SPI, DC>
 where
-    SPI: SpiDeviceWrite,
+    SPI: SpiDevice,
     DC: OutputPin,
 {
     async fn send_commands(&mut self, cmds: DataFormat<'_>) -> Result {

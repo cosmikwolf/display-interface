@@ -15,13 +15,13 @@ pub mod asynch;
 
 use byte_slice_cast::*;
 use display_interface::{DataFormat, DisplayError, WriteOnlyDataCommand};
-use embedded_hal::{digital::OutputPin, spi::SpiDeviceWrite};
+use embedded_hal::{digital::OutputPin, spi::SpiDevice};
 
 type Result = core::result::Result<(), DisplayError>;
 
 fn send_u8<SPI>(spi: &mut SPI, words: DataFormat<'_>) -> Result
 where
-    SPI: SpiDeviceWrite,
+    SPI: SpiDevice,
 {
     match words {
         DataFormat::U8(slice) => spi.write(slice).map_err(|_| DisplayError::BusWriteError),
@@ -135,7 +135,7 @@ impl<SPI, DC> SPIInterface<SPI, DC> {
 
 impl<SPI, DC> WriteOnlyDataCommand for SPIInterface<SPI, DC>
 where
-    SPI: SpiDeviceWrite,
+    SPI: SpiDevice,
     DC: OutputPin,
 {
     fn send_commands(&mut self, cmds: DataFormat<'_>) -> Result {
